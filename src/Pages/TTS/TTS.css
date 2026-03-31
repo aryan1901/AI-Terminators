@@ -1,0 +1,293 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ─── TTS Card ─────────────────────────────────────────── */
+.tts-card {
+  background: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tts-unsupported {
+  background: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  color: #fc8181;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* ─── Options Bar ──────────────────────────────────────── */
+.options-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: #0d0d1a;
+  flex-wrap: wrap;
+}
+
+.option-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.option-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #3a4a5a;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.option-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+/* Language select */
+.tts-select {
+  background: #1a1a2a;
+  border: 1px solid #2a2a3a;
+  border-radius: 10px;
+  color: #c8d8e8;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  padding: 7px 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.tts-select:focus { border-color: #fc8181; }
+
+/* Sliders */
+.tts-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tts-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 110px;
+  height: 4px;
+  border-radius: 99px;
+  background: #2a2a3a;
+  outline: none;
+  cursor: pointer;
+}
+
+.tts-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fc8181;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.tts-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+.tts-slider-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fc8181;
+  min-width: 36px;
+}
+
+/* ─── Text Input ───────────────────────────────────────── */
+.tts-input-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.tts-textarea {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e2e8f0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  padding: 20px 24px;
+  resize: none;
+  min-height: 200px;
+}
+
+.tts-textarea::placeholder { color: #2a3a4a; }
+
+/* ─── Waveform Animation ───────────────────────────────── */
+.tts-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 24px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  height: 48px;
+}
+
+.tts-wave-bar {
+  display: inline-block;
+  width: 3px;
+  border-radius: 99px;
+  background: #fc8181;
+  animation: wave-bar 0.8s ease-in-out infinite alternate;
+  min-height: 4px;
+}
+
+@keyframes wave-bar {
+  0%   { height: 4px;  opacity: 0.4; }
+  100% { height: 32px; opacity: 1; }
+}
+
+/* ─── Controls ─────────────────────────────────────────── */
+.tts-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.char-count { font-size: 0.75rem; color: #3a4a5a; }
+
+.tts-btns {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.panel-btn {
+  background: transparent;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  color: #5a6a7a;
+  font-size: 0.78rem;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.panel-btn:hover:not(:disabled) {
+  background: rgba(252,129,129,0.08);
+  color: #fc8181;
+  border-color: rgba(252,129,129,0.3);
+}
+
+.tts-ctrl-btn {
+  border: none;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 22px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tts-ctrl-btn.play {
+  background: linear-gradient(135deg, #c95050, #fc8181);
+  color: #fff;
+}
+
+.tts-ctrl-btn.pause {
+  background: rgba(252,129,129,0.15);
+  border: 1px solid rgba(252,129,129,0.3);
+  color: #fc8181;
+}
+
+.tts-ctrl-btn.stop {
+  background: transparent;
+  border: 1px solid #2a2a3a;
+  color: #5a6a7a;
+}
+
+.tts-ctrl-btn.stop:hover:not(:disabled) {
+  border-color: rgba(252,129,129,0.3);
+  color: #fc8181;
+}
+
+.tts-ctrl-btn:hover:not(:disabled) {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.tts-ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ─── History ──────────────────────────────────────────── */
+.history-section { margin-top: 4px; }
+
+.history-list { display: flex; flex-direction: column; gap: 10px; }
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+
+.history-item:hover {
+  border-color: rgba(252,129,129,0.25);
+  transform: translateX(3px);
+}
+
+.history-langs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hlang {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Syne', sans-serif;
+  color: #fc8181;
+  background: rgba(252,129,129,0.08);
+  border: 1px solid rgba(252,129,129,0.15);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.history-texts { flex: 1; min-width: 0; }
+
+.htext-in {
+  font-size: 0.82rem;
+  color: #c8d8e8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.htime { font-size: 0.72rem; color: #3a4a5a; flex-shrink: 0; }
+
+/* ─── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .options-bar    { gap: 14px; }
+  .option-divider { display: none; }
+  .tts-slider     { width: 80px; }
+  .tts-btns       { flex-wrap: wrap; justify-content: flex-end; }
+}

@@ -3,7 +3,7 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from "recharts";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Dashboard.css";
 
 // ─── Mock Data ───────────────────────────────────────────
@@ -99,6 +99,18 @@ const stats = [
   { label: "Audio Generated",   value: "1.8h", delta: "+12% this week", icon: "🔊", color: "#68d391" },
 ];
 
+// ─── Nav Items with explicit paths ───────────────────────
+// FIX: Each nav item now has its own `path` so the sidebar
+//      can call navigate(item.path) on click.
+const navItems = [
+  { id: "dashboard",  label: "Dashboard",       icon: "▦",  path: "/dashboard" },
+  { id: "translator", label: "Translator",       icon: "🌐", path: "/tools/translator" },
+  { id: "summarizer", label: "Summarizer",       icon: "📝", path: "/tools/summarizer" },
+  { id: "flashcards", label: "Flashcards",       icon: "🃏", path: "/tools/flashcards" },
+  { id: "voice",      label: "Voice Translator", icon: "🎙️", path: "/tools/voice-translator" },
+  { id: "tts",        label: "Text-to-Speech",   icon: "🔊", path: "/tools/tts" },
+];
+
 // ─── Custom Tooltip ───────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -119,7 +131,16 @@ const CustomTooltip = ({ active, payload, label }) => {
 // ─── Dashboard Component ──────────────────────────────────
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [activeNav, setActiveNav] = useState("dashboard");
+
+  // FIX: Derive the active nav item from the current URL
+  //      instead of a separate useState — this keeps the
+  //      sidebar highlight in sync when navigating back.
+  const location = useLocation();
+  const getActiveId = () => {
+    const match = navItems.find((item) => location.pathname === item.path);
+    return match ? match.id : "dashboard";
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogout = () => {
@@ -127,15 +148,6 @@ const Dashboard = () => {
     sessionStorage.removeItem("token");
     navigate("/login");
   };
-
-  const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: "▦" },
-    { id: "translator", label: "Translator", icon: "🌐" },
-    { id: "summarizer", label: "Summarizer", icon: "📝" },
-    { id: "flashcards", label: "Flashcards", icon: "🃏" },
-    { id: "voice", label: "Voice Translator", icon: "🎙️" },
-    { id: "tts", label: "Text-to-Speech", icon: "🔊" },
-  ];
 
   return (
     <div className="dash-wrapper">
@@ -151,8 +163,10 @@ const Dashboard = () => {
           {navItems.map((item) => (
             <button
               key={item.id}
-              className={`nav-item ${activeNav === item.id ? "active" : ""}`}
-              onClick={() => setActiveNav(item.id)}
+              className={`nav-item ${getActiveId() === item.id ? "active" : ""}`}
+              // FIX: Call navigate(item.path) so React Router
+              //      actually changes the page on click.
+              onClick={() => navigate(item.path)}
             >
               <span className="nav-icon">{item.icon}</span>
               {sidebarOpen && <span className="nav-label">{item.label}</span>}
