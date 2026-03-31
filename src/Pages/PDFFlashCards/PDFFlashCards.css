@@ -1,0 +1,81 @@
+.flashcards-container{
+  padding:40px;
+  color:white;
+  background:#0f172a;
+  min-height:100vh;
+}
+
+.upload-box{
+  border:2px dashed #4b5563;
+  padding:40px;
+  text-align:center;
+  margin-bottom:20px;
+  border-radius:10px;
+}
+
+.options{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.options button{
+  padding:10px 15px;
+  background:#1e293b;
+  border:none;
+  color:white;
+  border-radius:6px;
+}
+
+.generate{
+  background:#3b82f6;
+}
+
+.progress{
+  height:10px;
+  background:#1e293b;
+  border-radius:5px;
+  margin-bottom:20px;
+}
+
+.progress-bar{
+  width:60%;
+  height:100%;
+  background:#3b82f6;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.actions{
+  margin-top:20px;
+  display:flex;
+  gap:10px;
+}
+
+.actions button{
+  padding:10px 15px;
+  border:none;
+  border-radius:6px;
+}
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.5s;
+}
+
+.card.flip {
+  transform: rotateY(180deg);
+}

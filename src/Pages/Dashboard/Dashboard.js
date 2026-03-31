@@ -6,6 +6,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
+
 // ─── Mock Data ───────────────────────────────────────────
 const usageData = [
   { day: "Mon", translations: 12, summaries: 5, flashcards: 3, tts: 7 },
@@ -152,7 +153,13 @@ const Dashboard = () => {
             <button
               key={item.id}
               className={`nav-item ${activeNav === item.id ? "active" : ""}`}
-              onClick={() => setActiveNav(item.id)}
+              onClick={() => {
+  setActiveNav(item.id);
+
+  if (item.id === "tts") {
+    navigate("/tools/tts");
+  }
+}}
             >
               <span className="nav-icon">{item.icon}</span>
               {sidebarOpen && <span className="nav-label">{item.label}</span>}

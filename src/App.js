@@ -5,13 +5,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Registration from "./Pages/Registration/Registration.js";
 import Login from "./Pages/Login/Login.js";
 import Dashboard from "./Pages/Dashboard/Dashboard.js"
+import { motion } from "framer-motion";
+import PDFFlashCard from "./Pages/PDFFlashCards/PDFFlashCards.js"
+import TextToSpeech from "./Pages/TextToSpeech/TextToSpeech";
 
-// ─── (Uncomment as you build them) ──────────────────────
-// import Translator from "./pages/Translator/Translator";
-// import Summarizer from "./pages/Summarizer/Summarizer";
-// import Flashcards from "./pages/Flashcards/Flashcards";
-// import VoiceTranslator from "./pages/VoiceTranslator/VoiceTranslator";
-// import TTS from "./pages/TTS/TTS";
 
 // ─── Auth Guard ──────────────────────────────────────────
 const isAuthenticated = () => {
@@ -21,6 +18,13 @@ const isAuthenticated = () => {
   );
 };
 
+const handleFileUpload = (file) => {
+  if (!file) return;
+
+  console.log("Uploaded PDF:", file.name);
+
+  // later we send this to backend
+};
 // ─── Protected Route ─────────────────────────────────────
 const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) {
@@ -42,6 +46,9 @@ function App() {
         <Route path="/register" element={<Registration />} />
         <Route path="/login"    element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/tools/flashcards" element={<PDFFlashCard />} />
+        <Route path="/tools/tts" element={<TextToSpeech />} />
+
 
         {/* ── Protected Routes (uncomment as you build) ── */}
         {/*
