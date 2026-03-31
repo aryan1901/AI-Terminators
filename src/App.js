@@ -5,9 +5,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Registration from "./Pages/Registration/Registration.js";
 import Login from "./Pages/Login/Login.js";
 import Dashboard from "./Pages/Dashboard/Dashboard.js"
+import Translator from "./Pages/Translator/Translator.js";
+import Summarizer from "./Pages/Summarizer/Summarizer.js";
+import Flashcards from "./Pages/Flashcards/Flashcards.js";
+import VoiceTranslator from "./Pages/VoiceTranslator/VoiceTranslator.js";
+import TTS from "./Pages/TTS/TTS.js";
 
 // ─── (Uncomment as you build them) ──────────────────────
-// import Translator from "./pages/Translator/Translator";
 // import Summarizer from "./pages/Summarizer/Summarizer";
 // import Flashcards from "./pages/Flashcards/Flashcards";
 // import VoiceTranslator from "./pages/VoiceTranslator/VoiceTranslator";
@@ -41,7 +45,12 @@ function App() {
         {/* ── Public Routes ── */}
         <Route path="/register" element={<Registration />} />
         <Route path="/login"    element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/tools/translator" element={<ProtectedRoute><Translator /></ProtectedRoute>}/>
+        <Route path="/tools/summarizer" element={<ProtectedRoute><Summarizer /></ProtectedRoute>} />
+        <Route path="/tools/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
+        <Route path="/tools/voice-translator" element={<ProtectedRoute><VoiceTranslator /></ProtectedRoute>} />
+        <Route path="/tools/tts" element={<ProtectedRoute><TTS /></ProtectedRoute>} />
 
         {/* ── Protected Routes (uncomment as you build) ── */}
         {/*
