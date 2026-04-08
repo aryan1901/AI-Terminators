@@ -60,30 +60,35 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // ── TEMPORARY MOCK: Remove when backend is ready ──
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      const fakeToken = "test-token-123";
-      if (remember) {
-        localStorage.setItem("token", fakeToken);
-      } else {
-        sessionStorage.setItem("token", fakeToken);
-      }
-      navigate("/dashboard");
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
-      // ── REAL API CALL: Uncomment when backend is ready ──
-      // const response = await fetch("http://localhost:5000/api/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ email: formData.email, password: formData.password }),
-      // });
-      // const data = await response.json();
-      // if (!response.ok) {
-      //   setErrors({ api: data.message || "Invalid email or password." });
-      // } else {
-      //   if (remember) localStorage.setItem("token", data.token);
-      //   else sessionStorage.setItem("token", data.token);
-      //   navigate("/dashboard");
-      // }
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ api: data.message || "Invalid email or password." });
+        return;
+      }
+
+      if (remember) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data));
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+      } else {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data));
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+
+      navigate("/dashboard");
 
     } catch (error) {
       setErrors({ api: "Server error. Please try again later." });
@@ -185,7 +190,7 @@ const Login = () => {
             <div className="login-field">
               <div className="password-label-row">
                 <label htmlFor="password">Password</label>
-                <a href="#forgot" className="forgot-link">Forgot password?</a>
+                <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
               </div>
               <div className="password-input-wrapper">
                 <input

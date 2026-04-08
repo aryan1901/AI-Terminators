@@ -62,36 +62,35 @@ const Registration = () => {
 
     setIsLoading(true);
 
-    try {
-      // ── TEMPORARY MOCK: Remove when backend is ready ──
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ api: data.message || "Registration failed. Try again." });
+        return;
+      }
+
       setSuccessMessage("Account created successfully! Redirecting to login...");
-      setFormData({ fullName: "", email: "", password: "", confirmPassword: "" });
+      setFormData({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
       setTimeout(() => {
         navigate("/login");
-      }, 2000);
-
-      // ── REAL API CALL: Uncomment when backend is ready ──
-      // const response = await fetch("http://localhost:5000/api/auth/register", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     fullName: formData.fullName,
-      //     email: formData.email,
-      //     password: formData.password,
-      //   }),
-      // });
-      // const data = await response.json();
-      // if (!response.ok) {
-      //   setErrors({ api: data.message || "Registration failed. Try again." });
-      // } else {
-      //   setSuccessMessage("Account created successfully! Redirecting to login...");
-      //   setFormData({ fullName: "", email: "", password: "", confirmPassword: "" });
-      //   setTimeout(() => {
-      //     navigate("/login");
-      //   }, 2000);
-      // }
-
+      }, 1500);
     } catch (error) {
       setErrors({ api: "Server error. Please try again later." });
     } finally {
