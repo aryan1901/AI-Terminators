@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Translator.css";
+import AvatarDropdown from "../../Components/AvatarDropdown/AvatarDropdown";
+
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: "▦", path: "/dashboard" },
@@ -179,7 +181,7 @@ const Translator = () => {
             <div className="topbar-date">
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
-            <div className="topbar-avatar">B</div>
+            <AvatarDropdown name="Bansari" />
           </div>
         </header>
 

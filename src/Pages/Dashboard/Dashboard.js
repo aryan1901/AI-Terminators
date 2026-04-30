@@ -5,6 +5,9 @@ import {
 } from "recharts";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Dashboard.css";
+// Add import at top
+import AvatarDropdown from "../../Components/AvatarDropdown/AvatarDropdown";
+
 
 // ─── Mock Data ───────────────────────────────────────────
 const usageData = [
@@ -143,11 +146,6 @@ const Dashboard = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    navigate("/login");
-  };
 
   return (
     <div className="dash-wrapper">
@@ -173,17 +171,6 @@ const Dashboard = () => {
             </button>
           ))}
         </nav>
-
-        <div className="sidebar-footer">
-          <button className="nav-item logout-btn" onClick={handleLogout}>
-            <span className="nav-icon">🚪</span>
-            {sidebarOpen && <span className="nav-label">Logout</span>}
-          </button>
-        </div>
-
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "◀" : "▶"}
-        </button>
       </aside>
 
       {/* ── Main Content ── */}
@@ -199,7 +186,7 @@ const Dashboard = () => {
             <div className="topbar-date">
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
-            <div className="topbar-avatar">B</div>
+            <AvatarDropdown name="Bansari" />
           </div>
         </header>
 

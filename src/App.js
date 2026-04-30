@@ -10,6 +10,7 @@ import Summarizer from "./Pages/Summarizer/Summarizer.js";
 import Flashcards from "./Pages/Flashcards/Flashcards.js";
 import VoiceTranslator from "./Pages/VoiceTranslator/VoiceTranslator.js";
 import TTS from "./Pages/TTS/TTS.js";
+import Profile from "./Pages/Profile/Profile.js";
 
 // ─── (Uncomment as you build them) ──────────────────────
 // import Summarizer from "./pages/Summarizer/Summarizer";
