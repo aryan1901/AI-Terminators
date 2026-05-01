@@ -36,6 +36,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/translate', require('./routes/translateRoutes'));
 app.use('/api/summarize', require('./routes/summarizeRoutes'));
 app.use('/api/flashcards', require('./routes/flashcardRoutes'));
+app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 
 // Test route
 app.get('/', (req, res) => {

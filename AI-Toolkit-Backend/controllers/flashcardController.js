@@ -1,7 +1,28 @@
-const { CanvasFactory } = require('pdf-parse/worker');
-const { PDFParse } = require('pdf-parse');
-const axios = require('axios');
-const Flashcard = require('../models/Flashcard');
+const pdfParse = require("pdf-parse");
+const axios = require("axios");
+const Flashcard = require("../models/Flashcard");
+const UsageEvent = require("../models/UsageEvent");
+
+const parseFlashcards = (text) => {
+  const flashcards = [];
+  const regex = /Q:\s*(.*?)\s*A:\s*(.*?)(?=Q:|$)/gs;
+  let match;
+
+  while ((match = regex.exec(text)) !== null) {
+    const question = match[1]?.trim();
+    const answer = match[2]?.trim();
+
+    if (question && answer) {
+      flashcards.push({
+        question,
+        answer,
+        difficulty: "medium",
+      });
+    }
+  }
+
+  return flashcards;
+};
 
 // @desc    Generate flashcards from PDF
 // @route   POST /api/flashcards/generate
@@ -9,54 +30,45 @@ const Flashcard = require('../models/Flashcard');
 const generateFlashcards = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'Please upload a PDF file' });
+      return res.status(400).json({ message: "Please upload a PDF file" });
     }
 
     const pdfBuffer = req.file.buffer;
+    const data = await pdfParse(pdfBuffer);
+    const text = data.text.substring(0, 2000);
 
-    // Extract text from PDF using pdf-parse v2 API
-    const parser = new PDFParse({ data: pdfBuffer, CanvasFactory });
-    const data = await parser.getText();
-    const text = (data.text || '').substring(0, 2000);
+    const prompt = `Generate 10 question and answer pairs from this text. Format each as "Q: [question] A: [answer]":\n\n${text}`;
 
-    if (!text.trim()) {
-      return res.status(400).json({ message: 'Could not extract text from PDF' });
-    }
-
-    const prompt = `Generate 10 question and answer pairs from this text.
-Format each as:
-Q: [question]
-A: [answer]
-
-${text}`;
-
- const response = await axios.post(
-  'https://router.huggingface.co/v1/chat/completions',
-  {
-    model: 'mistralai/Mistral-7B-Instruct-v0.2',
-    messages: [
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/google/flan-t5-large",
+      { inputs: prompt },
       {
-        role: 'user',
-        content: `Generate 10 flashcards (Q&A) from this text:\n\n${text}`
+        headers: {
+          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+        },
       }
-    ]
-  },
-  {
-    headers: {
-      Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-      'Content-Type': 'application/json',
-    }
-  }
-);
+    );
 
-const flashcardsText = response.data.choices[0].message.content;
-
+    const flashcardsText = response.data?.[0]?.generated_text || "";
     const flashcards = parseFlashcards(flashcardsText);
 
     const savedFlashcard = await Flashcard.create({
       userId: req.user._id,
-      title: req.body.title || 'Untitled Flashcard Set',
+      title: req.body.title || "Untitled Flashcard Set",
+      sourceFileName: req.file.originalname,
       flashcards,
+    });
+
+    await UsageEvent.create({
+      userId: req.user._id,
+      tool: "flashcards",
+      action: "generate_flashcards",
+      meta: {
+        title: savedFlashcard.title,
+        summary: `Generated ${savedFlashcard.flashcards.length} cards from "${savedFlashcard.title}"`,
+        cardCount: savedFlashcard.flashcards.length,
+        sourceFileName: req.file?.originalname || "",
+      },
     });
 
     res.status(201).json({
@@ -64,41 +76,21 @@ const flashcardsText = response.data.choices[0].message.content;
       data: savedFlashcard,
     });
   } catch (error) {
-    console.error('Flashcard generation error:', error.response?.data || error.message);
-    res.status(500).json({
-      message: error.response?.data?.error || error.message || 'Server error',
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-const parseFlashcards = (text) => {
-  const lines = text.split('\n');
-  const flashcards = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].trim().startsWith('Q:')) {
-      flashcards.push({
-        question: lines[i].replace(/^Q:\s*/, '').trim(),
-        answer: lines[i + 1]?.replace(/^A:\s*/, '').trim() || 'No answer',
-      });
-    }
-  }
-
-  return flashcards.length > 0
-    ? flashcards
-    : [{ question: 'Sample Question', answer: 'Sample Answer' }];
-};
-
-// @desc    Get all flashcards
+// @desc    Get user's flashcards
 // @route   GET /api/flashcards
 // @access  Private
 const getFlashcards = async (req, res) => {
   try {
-    const flashcards = await Flashcard.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const flashcards = await Flashcard.find({ userId: req.user._id }).sort({
+      createdAt: -1,
+    });
 
-    res.status(200).json({
+    res.json({
       success: true,
-      count: flashcards.length,
       data: flashcards,
     });
   } catch (error) {
@@ -106,4 +98,7 @@ const getFlashcards = async (req, res) => {
   }
 };
 
-module.exports = { generateFlashcards, getFlashcards };
+module.exports = {
+  generateFlashcards,
+  getFlashcards,
+};
