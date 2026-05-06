@@ -1,70 +1,136 @@
-# Getting Started with Create React App
+# ⚡ AI Toolkit Hub — Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application providing a suite of AI-powered language tools: translation, summarization, flashcard generation, voice translation, and text-to-speech.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Getting Started
 
-### `npm start`
+### Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js 18+
+- npm 9+
+- The [AI Toolkit Hub backend](../backend) running (default: `http://localhost:5001`)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Installation
 
-### `npm test`
+```bash
+# 1. Install dependencies
+npm install
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# 2. Configure environment variables (see section below)
+cp .env.example .env
 
-### `npm run build`
+# 3. Start the development server
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ⚙️ Environment Variables
 
-### `npm run eject`
+All configuration lives in a `.env` file in the project root. **Never commit this file** — add it to `.gitignore`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| Variable | Default | Description |
+|---|---|---|
+| `REACT_APP_API_BASE` | `http://localhost:5001/api` | Base URL for the Express backend |
+| `REACT_APP_MYMEMORY_API_URL` | `https://api.mymemory.translated.net` | MyMemory API used by Voice Translator |
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Example `.env`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```env
+REACT_APP_API_BASE=http://localhost:5001/api
+REACT_APP_MYMEMORY_API_URL=https://api.mymemory.translated.net
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+> **Note:** After editing `.env`, restart the dev server with `npm start` — React does not hot-reload env changes.
 
-## Learn More
+### Production
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Set these variables in your hosting platform's environment config (Vercel, Netlify, AWS, etc.) instead of committing a `.env` file.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```env
+REACT_APP_API_BASE=https://your-api.yourdomain.com/api
+REACT_APP_MYMEMORY_API_URL=https://api.mymemory.translated.net
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📁 Project Structure
 
-### Analyzing the Bundle Size
+```
+src/
+├── App.js                          # Routes and auth guard
+├── index.js                        # React entry point
+├── utils/
+│   ├── api.js                      # API_BASE, authHeaders(), getUser()
+│   └── trackUsage.js               # Usage event tracking helper
+├── Components/
+│   ├── AvatarDropdown/             # Topbar avatar + dropdown menu
+│   └── ProfileModal/               # Profile & password modal
+└── Pages/
+    ├── Login/
+    │   ├── Login.js
+    │   ├── ForgotPassword.js
+    │   └── ResetPassword.js
+    ├── Registration/
+    ├── Dashboard/
+    ├── Translator/
+    ├── Summarizer/
+    ├── Flashcards/
+    ├── VoiceTranslator/
+    ├── TTS/
+    └── Profile/
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## 🛠 Available Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+| Script | Description |
+|---|---|
+| `npm start` | Run dev server at `localhost:3000` |
+| `npm run build` | Production build to `build/` |
+| `npm test` | Run tests in watch mode |
+| `npm run eject` | Eject CRA config (irreversible) |
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🔐 Authentication
 
-### Deployment
+- Login stores a JWT in `localStorage` (Remember Me) or `sessionStorage` (session only).
+- Protected routes redirect to `/login` if no token is found.
+- The `authHeaders()` utility in `src/utils/api.js` automatically attaches the token to every API request.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🧰 Tools
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| Tool | Route | Description |
+|---|---|---|
+| Dashboard | `/dashboard` | Usage stats, charts, recent activity |
+| Translator | `/tools/translator` | Text translation across 18 languages |
+| Summarizer | `/tools/summarizer` | Summarize text in paragraph, bullet, or TL;DR style |
+| Flashcards | `/tools/flashcards` | Generate flashcards from a PDF upload |
+| Voice Translator | `/tools/voice-translator` | Speak and get real-time translations |
+| Text-to-Speech | `/tools/tts` | Convert text to spoken audio |
+
+---
+
+## 📦 Key Dependencies
+
+| Package | Purpose |
+|---|---|
+| `react-router-dom` | Client-side routing |
+| `recharts` | Dashboard charts |
+| `@mui/icons-material` | Icons (logout, profile) |
+
+---
+
+## 🌐 Deployment
+
+1. Set `REACT_APP_API_BASE` to your production backend URL in your host's env config.
+2. Run `npm run build`.
+3. Deploy the `build/` folder to any static host (Vercel, Netlify, S3 + CloudFront, etc.).

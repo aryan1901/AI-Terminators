@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Registration.css";
+import { API_BASE } from "../../utils/api"; // ← added
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -62,8 +63,8 @@ const Registration = () => {
 
     setIsLoading(true);
 
-      try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
+    try {
+      const response = await fetch(`${API_BASE}/auth/register`, { // ← was hardcoded
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
