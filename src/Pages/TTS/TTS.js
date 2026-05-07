@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TTS.css";
+import AvatarDropdown from "../../Components/AvatarDropdown/AvatarDropdown";
 
 const navItems = [
   { id: "dashboard",  label: "Dashboard",       icon: "▦",  path: "/dashboard" },
@@ -49,11 +50,6 @@ const TTS = () => {
     if (!window.speechSynthesis) setSupported(false);
     return () => window.speechSynthesis?.cancel();
   }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   const handleInput = (e) => {
     setInputText(e.target.value);
@@ -139,15 +135,6 @@ const TTS = () => {
             </button>
           ))}
         </nav>
-        <div className="sidebar-footer">
-          <button className="nav-item logout-btn" onClick={handleLogout}>
-            <span className="nav-icon">🚪</span>
-            {sidebarOpen && <span className="nav-label">Logout</span>}
-          </button>
-        </div>
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "◀" : "▶"}
-        </button>
       </aside>
 
       {/* ── Main ── */}
@@ -162,7 +149,7 @@ const TTS = () => {
             <div className="topbar-date">
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
-            <div className="topbar-avatar">B</div>
+            <AvatarDropdown />
           </div>
         </header>
 

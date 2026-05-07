@@ -4,14 +4,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // ─── Page Imports ───────────────────────────────────────
 import Registration from "./Pages/Registration/Registration.js";
 import Login from "./Pages/Login/Login.js";
-import ForgotPassword from "./Pages/Login/ForgotPassword";
-import ResetPassword from "./Pages/Login/ResetPassword";
 import Dashboard from "./Pages/Dashboard/Dashboard.js"
 import Translator from "./Pages/Translator/Translator.js";
 import Summarizer from "./Pages/Summarizer/Summarizer.js";
 import Flashcards from "./Pages/Flashcards/Flashcards.js";
 import VoiceTranslator from "./Pages/VoiceTranslator/VoiceTranslator.js";
 import TTS from "./Pages/TTS/TTS.js";
+import Profile from "./Pages/Profile/Profile.js";
+import ForgotPassword from "./Pages/Login/ForgotPassword.js";
+import ResetPassword  from "./Pages/Login/ResetPassword.js";
 
 // ─── (Uncomment as you build them) ──────────────────────
 // import Summarizer from "./pages/Summarizer/Summarizer";
@@ -47,15 +48,14 @@ function App() {
         {/* ── Public Routes ── */}
         <Route path="/register" element={<Registration />} />
         <Route path="/login"    element={<Login />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/tools/translator" element={<ProtectedRoute><Translator /></ProtectedRoute>}/>
         <Route path="/tools/summarizer" element={<ProtectedRoute><Summarizer /></ProtectedRoute>} />
         <Route path="/tools/flashcards" element={<ProtectedRoute><Flashcards /></ProtectedRoute>} />
         <Route path="/tools/voice-translator" element={<ProtectedRoute><VoiceTranslator /></ProtectedRoute>} />
         <Route path="/tools/tts" element={<ProtectedRoute><TTS /></ProtectedRoute>} />
-
+        <Route path="/forgot-password"       element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* ── Protected Routes (uncomment as you build) ── */}
         {/*
         <Route

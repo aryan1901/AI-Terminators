@@ -1,6 +1,8 @@
+// src/Pages/VoiceTranslator/VoiceTranslator.js
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./VoiceTranslator.css";
+import AvatarDropdown from "../../Components/AvatarDropdown/AvatarDropdown";
 
 const navItems = [
   { id: "dashboard",  label: "Dashboard",       icon: "▦",  path: "/dashboard" },
@@ -27,14 +29,18 @@ const languages = [
 ];
 
 const historyData = [
-  { id: 1, from: "English", to: "Spanish", spoken: "Good morning, how are you?",    translated: "Buenos días, ¿cómo estás?", time: "5 min ago" },
-  { id: 2, from: "English", to: "French",  spoken: "Where is the nearest hospital?", translated: "Où est l'hôpital le plus proche?", time: "1 hr ago" },
+  { id: 1, from: "English", to: "Spanish", spoken: "Good morning, how are you?",     translated: "Buenos días, ¿cómo estás?",          time: "5 min ago" },
+  { id: 2, from: "English", to: "French",  spoken: "Where is the nearest hospital?", translated: "Où est l'hôpital le plus proche?",   time: "1 hr ago" },
 ];
+
+// MyMemory base URL from env; falls back to the public endpoint
+const MYMEMORY_BASE =
+  process.env.REACT_APP_MYMEMORY_API_URL || "https://api.mymemory.translated.net"; // ← env-driven
 
 // ─── Translate via MyMemory ───────────────────────────────
 const translateText = async (text, fromCode, toCode) => {
   const res = await fetch(
-    `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromCode}|${toCode}`
+    `${MYMEMORY_BASE}/get?q=${encodeURIComponent(text)}&langpair=${fromCode}|${toCode}`
   );
   if (!res.ok) throw new Error("Translation failed");
   const data = await res.json();
@@ -86,11 +92,6 @@ const VoiceTranslator = () => {
 
     recognitionRef.current = recognition;
   }, [fromLang]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
 
   const toggleRecording = () => {
     if (!recognitionRef.current) return;
@@ -171,15 +172,6 @@ const VoiceTranslator = () => {
             </button>
           ))}
         </nav>
-        <div className="sidebar-footer">
-          <button className="nav-item logout-btn" onClick={handleLogout}>
-            <span className="nav-icon">🚪</span>
-            {sidebarOpen && <span className="nav-label">Logout</span>}
-          </button>
-        </div>
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "◀" : "▶"}
-        </button>
       </aside>
 
       {/* ── Main ── */}
@@ -194,7 +186,7 @@ const VoiceTranslator = () => {
             <div className="topbar-date">
               {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </div>
-            <div className="topbar-avatar">B</div>
+            <AvatarDropdown />
           </div>
         </header>
 

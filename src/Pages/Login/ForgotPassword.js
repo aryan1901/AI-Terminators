@@ -1,6 +1,8 @@
+// src/Pages/Login/ForgotPassword.js
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Login.css";
+import { API_BASE } from "../../utils/api"; // ← added
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +17,7 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/forgot-password", {
+      const response = await fetch(`${API_BASE}/auth/forgot-password`, { // ← was hardcoded
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,7 +54,7 @@ const ForgotPassword = () => {
         </h1>
 
         <p className="login-subtext">
-          Enter your email and we’ll send you a reset link.
+          Enter your email and we'll send you a reset link.
         </p>
       </div>
 

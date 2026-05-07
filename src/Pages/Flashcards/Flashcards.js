@@ -1,64 +1,42 @@
+// src/Pages/Flashcards/Flashcards.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Flashcards.css";
+import AvatarDropdown from "../../Components/AvatarDropdown/AvatarDropdown";
+import { API_BASE, authHeaders } from "../../utils/api";
 
 const navItems = [
-  { id: "dashboard", label: "Dashboard", icon: "▦", path: "/dashboard" },
-  { id: "translator", label: "Translator", icon: "🌐", path: "/tools/translator" },
-  { id: "summarizer", label: "Summarizer", icon: "📝", path: "/tools/summarizer" },
-  { id: "flashcards", label: "Flashcards", icon: "🃏", path: "/tools/flashcards" },
-  { id: "voice", label: "Voice Translator", icon: "🎙️", path: "/tools/voice-translator" },
-  { id: "tts", label: "Text-to-Speech", icon: "🔊", path: "/tools/tts" },
+  { id: "dashboard",  label: "Dashboard",       icon: "▦",  path: "/dashboard" },
+  { id: "translator", label: "Translator",       icon: "🌐", path: "/tools/translator" },
+  { id: "summarizer", label: "Summarizer",       icon: "📝", path: "/tools/summarizer" },
+  { id: "flashcards", label: "Flashcards",       icon: "🃏", path: "/tools/flashcards" },
+  { id: "voice",      label: "Voice Translator", icon: "🎙️", path: "/tools/voice-translator" },
+  { id: "tts",        label: "Text-to-Speech",   icon: "🔊", path: "/tools/tts" },
 ];
 
 const Flashcards = () => {
   const navigate = useNavigate();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [title, setTitle] = useState("");
-  const [cards, setCards] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen]       = useState(true);
+  const [selectedFile, setSelectedFile]     = useState(null);
+  const [title, setTitle]                   = useState("");
+  const [cards, setCards]                   = useState([]);
+  const [history, setHistory]               = useState([]);
+  const [currentIdx, setCurrentIdx]         = useState(0);
+  const [flipped, setFlipped]               = useState(false);
+  const [loading, setLoading]               = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [topic, setTopic] = useState("");
-
-  const getToken = () =>
-    localStorage.getItem("token") || sessionStorage.getItem("token");
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-    navigate("/login");
-  };
+  const [error, setError]                   = useState("");
+  const [topic, setTopic]                   = useState("");
 
   const fetchHistory = async () => {
-    const token = getToken();
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     setHistoryLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/flashcards", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await fetch(`${API_BASE}/flashcards`, {
+        headers: authHeaders(false),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to fetch flashcards.");
-      }
-
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch flashcards.");
       setHistory(data.data || []);
     } catch (err) {
       console.error(err);
@@ -75,10 +53,8 @@ const Flashcards = () => {
     const file = e.target.files[0];
     setSelectedFile(file || null);
     setError("");
-
     if (file && !title.trim()) {
-      const cleanName = file.name.replace(/\.pdf$/i, "");
-      setTitle(cleanName);
+      setTitle(file.name.replace(/\.pdf$/i, ""));
     }
   };
 
@@ -93,13 +69,6 @@ const Flashcards = () => {
   };
 
   const handleGenerate = async () => {
-    const token = getToken();
-
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     if (!selectedFile) {
       setError("Please upload a PDF file first.");
       return;
@@ -113,26 +82,19 @@ const Flashcards = () => {
     setFlipped(false);
 
     try {
+      const token = authHeaders(false).Authorization;
       const formData = new FormData();
       formData.append("pdf", selectedFile);
       formData.append("title", title.trim() || "Untitled Flashcard Set");
 
-      const response = await fetch(
-        "http://localhost:5000/api/flashcards/generate",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const res = await fetch(`${API_BASE}/flashcards/generate`, {
+        method: "POST",
+        headers: { Authorization: token },
+        body: formData,
+      });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to generate flashcards.");
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to generate flashcards.");
 
       const generatedCards = (data.data?.flashcards || []).map((card) => ({
         q: card.question,
@@ -164,7 +126,6 @@ const Flashcards = () => {
       q: card.question,
       a: card.answer,
     }));
-
     setCards(mappedCards);
     setTopic(item.title || "Flashcards");
     setCurrentIdx(0);
@@ -179,7 +140,6 @@ const Flashcards = () => {
           <span className="sidebar-brand-icon">⚡</span>
           {sidebarOpen && <span className="sidebar-brand-name">AI Toolkit Hub</span>}
         </div>
-
         <nav className="sidebar-nav">
           {navItems.map((item) => (
             <button
@@ -192,17 +152,6 @@ const Flashcards = () => {
             </button>
           ))}
         </nav>
-
-        <div className="sidebar-footer">
-          <button className="nav-item logout-btn" onClick={handleLogout}>
-            <span className="nav-icon">🚪</span>
-            {sidebarOpen && <span className="nav-label">Logout</span>}
-          </button>
-        </div>
-
-        <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? "◀" : "▶"}
-        </button>
       </aside>
 
       <main className="dash-main">
@@ -221,7 +170,7 @@ const Flashcards = () => {
                 day: "numeric",
               })}
             </div>
-            <div className="topbar-avatar">B</div>
+            <AvatarDropdown />
           </div>
         </header>
 
@@ -261,23 +210,14 @@ const Flashcards = () => {
               <span className="char-count">
                 {selectedFile ? `Selected: ${selectedFile.name}` : "No PDF selected"}
               </span>
-
               <div className="fc-footer-btns">
-                <button className="panel-btn" onClick={handleClear}>
-                  ✕ Clear
-                </button>
+                <button className="panel-btn" onClick={handleClear}>✕ Clear</button>
                 <button
                   className="translate-btn"
                   onClick={handleGenerate}
                   disabled={loading || !selectedFile}
                 >
-                  {loading ? (
-                    <>
-                      <span className="spinner" /> Generating…
-                    </>
-                  ) : (
-                    "🃏 Generate Cards"
-                  )}
+                  {loading ? (<><span className="spinner" /> Generating…</>) : "🃏 Generate Cards"}
                 </button>
               </div>
             </div>
@@ -291,19 +231,13 @@ const Flashcards = () => {
                 {topic || "Flashcards"}
               </h2>
               {cards.length > 0 && (
-                <span className="fc-progress">
-                  {currentIdx + 1} / {cards.length}
-                </span>
+                <span className="fc-progress">{currentIdx + 1} / {cards.length}</span>
               )}
             </div>
 
             {loading ? (
               <div className="fc-loading">
-                <div className="loading-dots">
-                  <span />
-                  <span />
-                  <span />
-                </div>
+                <div className="loading-dots"><span /><span /><span /></div>
                 <p>Generating your flashcards…</p>
               </div>
             ) : error ? (
@@ -335,23 +269,11 @@ const Flashcards = () => {
                 </div>
 
                 <div className="fc-nav">
-                  <button
-                    className="fc-nav-btn"
-                    onClick={goPrev}
-                    disabled={currentIdx === 0}
-                  >
-                    ← Prev
-                  </button>
+                  <button className="fc-nav-btn" onClick={goPrev} disabled={currentIdx === 0}>← Prev</button>
                   <button className="fc-flip-btn" onClick={() => setFlipped((f) => !f)}>
                     {flipped ? "Show Question" : "Show Answer"}
                   </button>
-                  <button
-                    className="fc-nav-btn"
-                    onClick={goNext}
-                    disabled={currentIdx === cards.length - 1}
-                  >
-                    Next →
-                  </button>
+                  <button className="fc-nav-btn" onClick={goNext} disabled={currentIdx === cards.length - 1}>Next →</button>
                 </div>
 
                 <div className="fc-all-cards">
@@ -361,10 +283,7 @@ const Flashcards = () => {
                       <div
                         key={i}
                         className={`fc-all-item ${i === currentIdx ? "active" : ""}`}
-                        onClick={() => {
-                          setCurrentIdx(i);
-                          setFlipped(false);
-                        }}
+                        onClick={() => { setCurrentIdx(i); setFlipped(false); }}
                       >
                         <span className="fc-all-num">{i + 1}</span>
                         <div className="fc-all-texts">
@@ -384,31 +303,21 @@ const Flashcards = () => {
           <h2 className="section-title">Recent Sets</h2>
           <div className="history-list">
             {historyLoading ? (
-              <div className="fc-loading">
-                <p>Loading history…</p>
-              </div>
+              <div className="fc-loading"><p>Loading history…</p></div>
             ) : history.length === 0 ? (
               <div className="fc-error">No flashcard sets found yet.</div>
             ) : (
               history.map((item) => (
-                <div
-                  className="history-item"
-                  key={item._id}
-                  onClick={() => loadFromHistory(item)}
-                >
+                <div className="history-item" key={item._id} onClick={() => loadFromHistory(item)}>
                   <div className="history-langs">
                     <span className="hlang">{item.flashcards?.length || 0} cards</span>
                   </div>
                   <div className="history-texts">
                     <p className="htext-in">{item.title}</p>
-                    <p className="htext-out">
-                      {item.flashcards?.[0]?.question || "No preview available"}
-                    </p>
+                    <p className="htext-out">{item.flashcards?.[0]?.question || "No preview available"}</p>
                   </div>
                   <span className="htime">
-                    {item.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString()
-                      : ""}
+                    {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
                   </span>
                 </div>
               ))

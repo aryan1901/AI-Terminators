@@ -1,6 +1,8 @@
+// src/Pages/Login/ResetPassword.js
 import React, { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import "./Login.css";
+import { API_BASE } from "../../utils/api"; // ← added
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -18,10 +20,10 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/auth/reset-password/${token}`, {
+      const response = await fetch(`${API_BASE}/auth/reset-password/${token}`, { // ← was hardcoded
         method: "PUT",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ password }),
       });
